@@ -43,7 +43,7 @@ export const updateWarLogs = functions.https.onRequest(async (request, response)
         await reference.set(clanData, { merge: true });
         response.send(JSON.stringify(clanStoredData));
     } catch (error) {
-        response.send(error.message);
+        response.send(JSON.stringify(error));
     }
 });
 
@@ -63,6 +63,6 @@ export const getClan = functions.https.onRequest(async (request, response) => {
         const clan = await reference.get();
         response.send(JSON.stringify(clan.data()));
     } catch (error) {
-        response.send(error.message);
+        response.send(JSON.stringify(error));
     }
 });
