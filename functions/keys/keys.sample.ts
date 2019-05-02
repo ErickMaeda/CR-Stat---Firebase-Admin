@@ -1,0 +1,1 @@
+export const CLASH_ROYALE_API_KEY = "<your-api-key-here>";
