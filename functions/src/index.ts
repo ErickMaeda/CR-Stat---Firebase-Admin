@@ -8,12 +8,12 @@ admin.initializeApp();
 
 const config = {
     headers: {
-        'authorization': "Bearer " + CLASH_ROYALE_API_KEY,
+        'Authorization': "Bearer " + CLASH_ROYALE_API_KEY,
         'Accept': 'application/json'
     }
 };
 
-const BASE_API = "https://api.clashroyale.com/v1";
+const BASE_API = "https://api.royaleapi.com";
 
 export const updateWarLogs = functions.https.onRequest(async (request, response) => {
     try {
@@ -22,9 +22,9 @@ export const updateWarLogs = functions.https.onRequest(async (request, response)
             response.status(400).send('TAG param not found!');
             return;
         }
-        const clan = await axios.get(`${BASE_API}/clans/%23${clanTag}`, config);
+        const clan = await axios.get(`${BASE_API}/clan/${clanTag}`, config);
         const clanData = clan.data;
-        const warlog = await axios.get(`${BASE_API}/clans/%23${clanTag}/warlog`, config);
+        const warlog = await axios.get(`${BASE_API}/clan/${clanTag}/warlog`, config);
 
         const reference = admin
             .firestore()
@@ -35,15 +35,15 @@ export const updateWarLogs = functions.https.onRequest(async (request, response)
         const clanStoredData = clanStored.data();
 
         if (clanStoredData && clanStoredData.warlog) {
-            clanData.warlog = uniqBy([...clanStoredData.warlog, ...warlog.data.items], 'createdDate');
+            clanData.warlog = uniqBy([...clanStoredData.warlog, ...warlog.data], 'createdDate');
         } else {
-            clanData.warlog = warlog.data.items;
+            clanData.warlog = warlog.data;
         }
 
         await reference.set(clanData, { merge: true });
         response.send(JSON.stringify(clanStoredData));
     } catch (error) {
-        response.status(error.status).send(error.message);
+        response.send(error.message);
     }
 });
 
@@ -63,6 +63,6 @@ export const getClan = functions.https.onRequest(async (request, response) => {
         const clan = await reference.get();
         response.send(JSON.stringify(clan.data()));
     } catch (error) {
-        response.status(error.status).send(error.message);
+        response.send(error.message);
     }
 });
