@@ -41,9 +41,9 @@ export const updateWarLogs = functions.https.onRequest(async (request, response)
         }
 
         await reference.set(clanData, { merge: true });
-        response.send(JSON.stringify(clanStoredData));
+        response.status(200).send(JSON.stringify(clanStoredData));
     } catch (error) {
-        response.send(error.message);
+        response.status(500).send(error);
     }
 });
 
@@ -61,8 +61,8 @@ export const getClan = functions.https.onRequest(async (request, response) => {
             .doc(`#${clanTag}`);
 
         const clan = await reference.get();
-        response.send(JSON.stringify(clan.data()));
+        response.status(200).send(JSON.stringify(clan.data()));
     } catch (error) {
-        response.send(error.message);
+        response.status(500).send(error);
     }
 });
