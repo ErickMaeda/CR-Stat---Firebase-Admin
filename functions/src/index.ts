@@ -40,8 +40,10 @@ export const updateWarLogs = functions.https.onRequest(async (request, response)
             clanData.warlog = warlog.data;
         }
 
+        clanData.lastUpdate = new Date();
+
         await reference.set(clanData, { merge: true });
-        response.status(200).send(JSON.stringify(clanStoredData));
+        response.status(200).send(JSON.stringify(clanData));
     } catch (error) {
         response.status(500).send(error);
     }
